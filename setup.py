@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
-import os
 
 package_name = 'prun'
 
-with open("README.md", "r") as fh:
+with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(name=package_name,
@@ -13,9 +12,9 @@ setup(name=package_name,
       author_email='PeterPyPanGitHub@gmail.com',
       packages=find_packages('.'),
       package_data={},
-      long_description='',
+      long_description=long_description,
       long_description_content_type="text/markdown",
-      url='',
+      url='https://github.com/PeterPyPan/prun',
       python_requires='',
       install_requires=[],
       extras_require={},
