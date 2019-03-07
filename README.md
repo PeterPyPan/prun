@@ -1,14 +1,16 @@
-# Readme prun #
+# Readme prun
 
 `prun` is a convenience app for working with virtual environments.
-Use `prun` within a folder structure that has a virtual environment folder.`
-It will automatically add the  
+Use `prun` within a folder structure that has a virtual environment folder 
+to automatically work with the python of the virtual environment.
+
 
 The code below shows how to use `prun`.
 First a local virtual environment is created in the `.venv` folder.
 ```
 python -m virtualenv .venv
 ```
+
 
 Running the following command from the command shell will show that the 
 `<venv>/Scripts (win)` or `<venv>/bin` (osx, linux) is added to the path.
@@ -22,7 +24,6 @@ prun which python
 ```
 prun pip install numpy
 ```
-
 
 
 When executing `prun` without any extra command line arguments, 
