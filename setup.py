@@ -17,7 +17,7 @@ setup(name=package_name,
       url='https://github.com/PeterPyPan/prun',
       python_requires='>=3',
       install_requires=[],
-      extras_require={},
+      extras_require={'dev': ['pytest']},
       entry_points={'console_scripts': ['prun=prun:main']},
       license='MIT',
       classifiers=[
