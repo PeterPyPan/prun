@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 package_name = 'prun'
 
-with open('README.md', 'r') as fh:
+with open('README.md', 'rt') as fh:
     long_description = fh.read()
 
 setup(name=package_name,
-      version='0.0.2',
+      version='0.1.0',
       description='A convenience app for working with virtual environments like a breeze.',
       author='PeterPyPan',
       author_email='PeterPyPanGitHub@gmail.com',
