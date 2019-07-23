@@ -6,7 +6,7 @@ with open('README.md', 'rt') as fh:
     long_description = fh.read()
 
 setup(name=package_name,
-      version='0.1.0',
+      version='0.2.0',
       description='A convenience app for working with virtual environments like a breeze.',
       author='PeterPyPan',
       author_email='PeterPyPanGitHub@gmail.com',
@@ -27,5 +27,5 @@ setup(name=package_name,
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python :: 3',
       ],
-      keywords='virtual environment venv virtualenv pipenv',
+      keywords='virtual environment venv .venv virtualenv pipenv',
       )
