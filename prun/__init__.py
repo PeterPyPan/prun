@@ -2,12 +2,28 @@ import glob
 import os
 import sys
 import subprocess
+import shutil
+
+_platform_dict = {'win32': {'msg_not_found': "'%s' is not recognized as an internal or external command,\n"
+                                             "operable program or batch file.",
+                            'exec_folder': 'Scripts',
+                            'exec_name': 'python.exe',
+                            '-show': 'where'},
+                  'darwin': {'msg_not_found': '%s: command not found',
+                             'exec_folder': 'bin',
+                             'exec_name': 'python',
+                             '-show': 'which'}
+                  }
+
 _venv_names = ['.venv', 'venv']
 
 
 def main():
     # system dependent variables
-    not_found_msg, exec_folder, exec_name = _get_system_specific_vars(sys.platform)
+    sys_vars = _platform_dict[sys.platform]
+    exec_folder = sys_vars['exec_folder']
+    exec_name = sys_vars['exec_name']
+    msg_not_found = sys_vars['msg_not_found']
 
     # get the current working directory
     current_dir = os.getcwd()
@@ -21,65 +37,66 @@ def main():
         raise ValueError('No virtual environment was found')
     python_folder = os.path.dirname(python_exec)
 
-    # process the command line arguments for special tasks
-    cli_args = process_cli_args(cli_args=cli_args)
-
     # Add the python executable folder to the path environment variable
-    os.environ['PATH'] = os.pathsep.join([python_folder, os.environ.get('PATH', '')])
+    env = os.environ.copy()
+    env['PATH'] = os.pathsep.join(filter(None, [python_folder, os.environ.get('PATH', '')]))
+
+    # process the command line arguments for special tasks
+    cli_args = process_cli_args(cli_args=cli_args, env_path=env['PATH'], platform_vars=sys_vars)
+    if cli_args[0] is None:
+        print(msg_not_found % cli_args[0])
+        sys.exit(1)
 
     # Run the command
     try:
-        p = subprocess.Popen(cli_args, universal_newlines=True)
-        p.communicate()
+        p = subprocess.run(cli_args, universal_newlines=True, env=env)
         sys.exit(p.returncode)
     except FileNotFoundError:
-        print(not_found_msg % cli_args[0])
+        print(msg_not_found % cli_args[0])
         sys.exit(1)
 
 
-def _get_system_specific_vars(platform):
-    if platform == 'win32':
-        not_found_msg = "'%s' is not recognized as an internal or external command, " \
-                        "operable program or batch file."
-        exec_folder, exec_name = 'Scripts', 'python.exe'
-    else:
-        not_found_msg = '%s: command not found'
-        exec_folder, exec_name = 'bin', 'python'
-    return not_found_msg, exec_folder, exec_name
-
-
-def process_cli_args(cli_args):
+def process_cli_args(cli_args, env_path, platform_vars):
     """
     Process the list of command line arguments.
 
     Args:
         cli_args (list of str): list of command line arguments
+        env_path (str): path for finding executables to construct cli args
+        platform_vars (dict): platform dependent variables
 
     Returns:
         list of str: processed list of command line arguments
     """
+
     if len(cli_args) == 0:
         # if no cli args, add python
-        cli_args = ['python']
-    elif cli_args[0].endswith('.py'):
+        cli_args = [platform_vars['exec_name']]
+
+    if cli_args[0].endswith('.py'):
         # if first argument is a python file, add python
-        cli_args = ['python'] + cli_args
-    elif cli_args[0] == '-show':
+        cli_args = [platform_vars['exec_name']] + cli_args
+
+    if cli_args[0] == '-show':
         # if first argument is -show, show the path to the found python
-        cli_args = ['which', 'python']
+        cli_args = [platform_vars['-show'], platform_vars['exec_name']]
     elif cli_args[0] == '-h' or cli_args[0] == '-help':
         print('prun help: \n'
               '  Running a command using the local virtual environment:\n'
               '    prun command arg1 arg2 ...\n'
               '  Running python from the local virtual environment:\n'
               '    prun\n'
-              '  Running a python file from the locql virtuql environment:\n'
+              '  Running a python file from the local virtual environment:\n'
               '    prun script.py arg1 arg2\n'
               '  Show the path to the python executable of the virtual environment:\n'
               '    prun -show\n'
               '  Show the prun help\n'
               '    prun -h')
         sys.exit(0)
+    else:
+        # cli_args[0] is an executable
+        cli_args[0] = shutil.which(cli_args[0], path=env_path)
+
     return cli_args
 
 
