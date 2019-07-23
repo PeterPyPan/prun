@@ -2,6 +2,7 @@ import glob
 import os
 import sys
 import subprocess
+_venv_names = ['.venv', 'venv']
 
 
 def main():
@@ -120,9 +121,7 @@ def find_virtual_environment(folder, exec_folder_name, exec_name):
     Returns:
         str or None: path to the python executable or None if it was not found
     """
-    glob_paths = [os.path.join(folder, '*', exec_folder_name, exec_name),
-                  os.path.join(folder, '.?*', exec_folder_name, exec_name)]
-
+    glob_paths = [os.path.join(folder, v, exec_folder_name, exec_name) for v in _venv_names]
     python_exec = None
     for glob_path in glob_paths:
         try:
