@@ -13,6 +13,10 @@ _platform_dict = {'win32': {'msg_not_found': "'%s' is not recognized as an inter
                              'exec_folder': 'bin',
                              'exec_name': 'python',
                              '-show': 'which'}
+                  'linux': {'msg_not_found': '%s: command not found',
+                            'exec_folder': 'bin',
+                            'exec_name': 'python',
+                            '-show': 'which'},
                   }
 
 _venv_names = ['.venv', 'venv']
