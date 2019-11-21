@@ -12,7 +12,7 @@ _platform_dict = {'win32': {'msg_not_found': "'%s' is not recognized as an inter
                   'darwin': {'msg_not_found': '%s: command not found',
                              'exec_folder': 'bin',
                              'exec_name': 'python',
-                             '-show': 'which'}
+                             '-show': 'which'},
                   'linux': {'msg_not_found': '%s: command not found',
                             'exec_folder': 'bin',
                             'exec_name': 'python',
