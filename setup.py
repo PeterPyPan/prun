@@ -6,7 +6,7 @@ with open('README.md', 'rt') as fh:
     long_description = fh.read()
 
 setup(name=package_name,
-      version='0.3.0',
+      version='0.3.1',
       description='A convenience app for working with virtual environments like a breeze.',
       author='PeterPyPan',
       author_email='PeterPyPanGitHub@gmail.com',
