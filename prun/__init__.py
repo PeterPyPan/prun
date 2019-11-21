@@ -46,17 +46,18 @@ def main():
     env['PATH'] = os.pathsep.join(filter(None, [python_folder, os.environ.get('PATH', '')]))
 
     # process the command line arguments for special tasks
-    cli_args = process_cli_args(cli_args=cli_args, env_path=env['PATH'], platform_vars=sys_vars)
-    if cli_args[0] is None:
+    cli_args_proc = process_cli_args(cli_args=cli_args, env_path=env['PATH'],
+                                     platform_vars=sys_vars)
+    if cli_args_proc[0] is None:
         print(msg_not_found % cli_args[0])
         sys.exit(1)
 
     # Run the command
     try:
-        p = subprocess.run(cli_args, universal_newlines=True, env=env)
+        p = subprocess.run(cli_args_proc, universal_newlines=True, env=env)
         sys.exit(p.returncode)
     except FileNotFoundError:
-        print(msg_not_found % cli_args[0])
+        print(msg_not_found % cli_args_proc[0])
         sys.exit(1)
 
 
@@ -72,6 +73,8 @@ def process_cli_args(cli_args, env_path, platform_vars):
     Returns:
         list of str: processed list of command line arguments
     """
+    # deep copy the input arguments
+    cli_args = list(cli_args)
 
     if len(cli_args) == 0:
         # if no cli args, add python
