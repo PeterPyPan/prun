@@ -1,0 +1,5 @@
+# Install self as editable
+-e .
+
+# Development
+pre-commit==2.9.*
