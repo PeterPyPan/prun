@@ -1,48 +1,41 @@
 # prun readme
+`prun` is a convenience package for working with virtual/conda environments. It 
+contains three executables: `pvenv`, `prun` and `pactivate`. The `examples` folder 
+contains several example project setups with a readme file, to explain the use of 
+`pvenv`, `prun` and `pactivate`. There are examples for conda and virutal environment 
+projects.
 
-*prun* is a convenience app for working with virtual environments.
-Use *prun*  within a folder structure that has a virtual environment folder 
-to automatically work with the python of the virtual environment.
+- Use `pvenv` to create and manage virtual/conda environments for a project. Based on 
+  the presence of a `environment.yml` (conda) or a `requirements.txt` (venv) file, 
+  `pvenv` will create a local environment for you.
+
+- Use `prun` within a project folder that contains a virtual/conda environment to 
+  automatically work with the python of the virtual/conda environment, without the 
+  need of activating the environment.
+
+- Use `pactivate` within a project folder that contains a virtual/conda environment to 
+  automatically activate the environment.
 
 
-First, create a local virtual environment in the *.venv* folder. 
-This can be done using the virtualenv package.
+## prun installation
+`prun` should be installed in your system python and the `<PythonFolder>/Scripts` (win) 
+or `<PythonFolder>/bin` folder needs to be added to the path. This makes sure that the 
+installed `prun`, `pvenv` and `pactivate` executables can be found.
 
+If you want to use conda environments, you will need to install conda and add the 
+`<CondaFolder>/condabin` folder to your path. 
+
+Install `prun` through pip:
 ```
-python -m virtualenv .venv
-```
-
-
-The path to the python executable of the local virtual environment can be printed using the following command:
-
-```
+# Install prun.
+python -m pip install prun
+# Running this command after installation should let you know that 
+# `prun` could not find a virtual environment.
 prun -show
+# ValueError: No virtual environment was found.
 ```
 
-
-*prun* can be used to install python packages in the local virtual environment.
-
-```
-prun pip install numpy
-```
-
-
-Running a python file, using the python executable from the local virtual environment is easy with *prun*.
-
-```
-prun script.py arg0 arg1
-```
-
-
-When executing *prun* without any extra command line arguments, 
-the python of the virtual environment will be executed.
-
-```
-prun
-```
-
-*prun* can run any command line command.
-
-```
-prun command arg0 arg1 ...
-```
+## prun settings
+`pvenv`, `prun` and `pactivate` assume that your virtual/conda environment folder is 
+named `.venv`. If you use a different name for your environments (eg. `venv`), you 
+will have to specify an environment value `PVENV_ENV_DIR` (eg `PVENV_ENV_DIR=venv`).
