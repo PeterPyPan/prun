@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 88
+skip-string-normalization = true
+target_version = ['py36']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \..*  # exclude directories starting with a `.` from getting formatted
+  )/
+)
+'''

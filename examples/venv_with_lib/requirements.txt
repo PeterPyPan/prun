@@ -1,0 +1,6 @@
+# Install your local library `mylib` in editable mode
+-e .
+
+# Install additional development dependencies
+pytest
+pre-commit==2.*

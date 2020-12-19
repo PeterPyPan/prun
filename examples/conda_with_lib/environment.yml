@@ -1,0 +1,6 @@
+dependencies:
+  - python=3.6
+  - pytest
+  - pip
+  - pip:
+      - -e .
