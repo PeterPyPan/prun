@@ -1,18 +1,19 @@
-from setuptools import setup, find_packages
 import glob
 import os
+from setuptools import setup, find_packages
 
-package_name = 'prun'
-
+# Load the readme for the long description.
 with open('README.md', 'rt') as fh:
     long_description = fh.read()
 
+# Find the scripts.
 _this_path = os.path.realpath(os.path.dirname(__file__))
 scripts = glob.glob(os.path.join(_this_path, 'scripts', '*'))
 
+# Call setup.
 setup(
-    name=package_name,
-    version='0.3.1',
+    name='prun',
+    version='1.0.0',
     description='A convenience app for working with virtual and conda environments.',
     author='PeterPyPan',
     author_email='PeterPyPanGitHub@gmail.com',
@@ -23,8 +24,7 @@ setup(
     url='https://github.com/PeterPyPan/prun',
     python_requires='>=3',
     install_requires=[],
-    extras_require={'dev': ['pytest']},
-    entry_points={'console_scripts': ['prun=prun.__main__:main']},
+    entry_points={'console_scripts': ['prun=prun.prun:main', 'pvenv=prun.pvenv:main']},
     scripts=scripts,
     license='MIT',
     classifiers=[
@@ -34,5 +34,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
     ],
-    keywords='virtual environment venv .venv virtualenv pipenv',
+    keywords='virtual environment venv .venv virtualenv pipenv conda',
 )

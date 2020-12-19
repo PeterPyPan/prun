@@ -2,8 +2,6 @@ import os
 import sys
 import subprocess
 import shutil
-from pathlib import Path
-import re
 
 from ._constants import (
     _THIS_PLATFORM_DEFS,
@@ -13,41 +11,11 @@ from ._constants import (
     _ACTIVATE_EXEC,
     _CONDA_EXEC,
 )
-from .utils import search_python_in_folder_structure
-
-
-def platformed_path(path, platform, add_quotes=True):
-    # Remove quotes and convert to path.
-    path = Path(path.strip('"').strip("'"))
-
-    # Convert path to target platform definition.
-    if platform != sys.platform:
-        path_class = _PLATFORM_DEFS[platform]['path_class']
-        path = path_class(path)
-
-    # Convert back to string.
-    path = str(path)
-
-    # Windows to posix conversion for drives.
-    if sys.platform == 'win32' and platform != 'win32':
-        # Try to find drive letters in the path
-        m = re.match('^([A-Za-z]):\\\\', path)
-
-        # Resolve drive letters if necessary.
-        if m is not None:
-            path = f'{m.group(1)}:{path[m.span()[1]:]}'
-
-    elif sys.platform != 'win32' and platform == 'win32':
-        raise NotImplementedError('Conversion from posix to win32 not implemented.')
-
-    if add_quotes:
-        quote_char = _PLATFORM_DEFS[platform]['path_quote']
-        path = f'{quote_char}{path}{quote_char}'
-
-    return path
+from .utils import search_python_in_folder_structure, platformed_path
 
 
 def main():
+    """Main function of `prun`."""
     # Get the current working directory.
     current_dir = os.getcwd()
 
@@ -75,9 +43,11 @@ def main():
 
     # Special `prun activate` case. Supports both standard venv and conda envs.
     if cli_args_proc[0] == _ACTIVATE_EXEC:
-        prun_activate(
+        activate_cmd_args = prun_get_activate_cmd(
             venv_path=venv_path, exec_path=exec_path, force_platform=force_platform
         )
+        # Print the activate command without newline.
+        print(' '.join(activate_cmd_args), end='')
         return
 
     # Run the command.
@@ -88,7 +58,21 @@ def main():
         sys.exit(1)
 
 
-def prun_activate(venv_path, exec_path, force_platform):
+def prun_get_activate_cmd(venv_path, exec_path, force_platform):
+    """
+    Get the activate command line arguments for a virtual/conda environment.
+
+    Args:
+        venv_path (str): Path to the environment folder.
+
+        exec_path (str): Path to the executables folder of the environment.
+
+        force_platform (str): Force a different platform then the system platform.
+            Useful when using git bash on windows.
+
+    Returns:
+        List[str]: List of command arguments to activate the virtual/conda environment.
+    """
     conda_meta_folder = os.path.join(venv_path, _CONDA_META_FOLDER)
     if os.path.exists(conda_meta_folder):
         # Conda environment.
@@ -96,6 +80,7 @@ def prun_activate(venv_path, exec_path, force_platform):
         if conda_exec is None:
             print(_THIS_PLATFORM_DEFS['msg_not_found'] % conda_exec)
             sys.exit(1)
+        # TODO: git bash under windows does not handle spaces in venv_path.
         cmd_args = [
             _CONDA_EXEC,
             _ACTIVATE_EXEC,
@@ -113,8 +98,7 @@ def prun_activate(venv_path, exec_path, force_platform):
         activate_exec = platformed_path(activate_exec, platform=force_platform)
         cmd_args = _PLATFORM_DEFS[force_platform]['activate_prefix'] + [activate_exec]
 
-    # Print the activate command.
-    print(' '.join(cmd_args), end='')
+    return cmd_args
 
 
 def process_cli_args(cli_args, env_path):
@@ -122,11 +106,11 @@ def process_cli_args(cli_args, env_path):
     Process the list of command line arguments.
 
     Args:
-        cli_args (list of str): list of command line arguments
-        env_path (str): path for finding executables to construct cli args
+        cli_args (list of str): List of command line arguments.
+        env_path (str): Path for finding executables to construct cli args.
 
     Returns:
-        list of str: processed list of command line arguments
+        list of str: Processed list of command line arguments.
     """
     # Deep copy the input arguments.
     cli_args = list(cli_args)
@@ -157,11 +141,8 @@ def process_cli_args(cli_args, env_path):
             '  Show the path to the python executable of the virtual environment:\n'
             '    prun -show\n'
             '  Return a string that can be used to activate the virtual environment:\n'
-            '  To activate in linux use `source $(prun activate)`.\n'
-            '  To activate in windows use ``'
+            '  (Use `pactivate` to actually activate the environment)\n'
             '    prun activate\n'
-            '  Show the prun help\n'
-            '    prun -h'
         )
         sys.exit(0)
     else:
