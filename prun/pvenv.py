@@ -127,6 +127,22 @@ def setup_venv(project_dir, venv_dir, requirements_path, clear=False):
     )
     logging.info('Upgrading pip done.')
 
+    # Install core pip packages.
+    logging.info('Installing core pip packages...')
+    subprocess.run(
+        [
+            venv_python,
+            '-m',
+            'pip',
+            'install',
+            '--upgrade',
+            'wheel',
+        ],
+        cwd=project_dir,
+        check=True,
+    )
+    logging.info('Installing core pip packages done.')
+
     # Install requirements.
     logging.info('Installing requirements...')
     subprocess.run(
