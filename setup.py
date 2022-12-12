@@ -13,7 +13,7 @@ scripts = glob.glob(os.path.join(_this_path, 'scripts', '*'))
 # Call setup.
 setup(
     name='prun',
-    version='1.0.0',
+    version='0.4.1',
     description='A convenience app for working with virtual and conda environments.',
     author='PeterPyPan',
     author_email='PeterPyPanGitHub@gmail.com',
