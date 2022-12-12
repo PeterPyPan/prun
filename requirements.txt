@@ -6,3 +6,6 @@ pre-commit==2.9.*
 pytest
 pytest-mock
 pytest-cov
+
+# Build requirements
+wheel
